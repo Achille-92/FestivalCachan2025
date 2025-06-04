@@ -242,12 +242,8 @@ void loop(){
           // if (tab_capteur_norm[2] < 70 && tab_capteur_norm[3] > 30) pos_ligne = 1;   // Si le robot est trop à Gauche de la ligne, on passe à l'état 1
           // if (tab_capteur_norm[2] < 70 && tab_capteur_norm[1] > 30) pos_ligne = 2;   // Si le robot est trop à Droite de la ligne, on passe à l'état 2          
           CompteLigne();
-          if(tab_capteur_norm[2] > 90){
-            pos_ligne = 3;
-          }
-          else {
-            RouleMaPoule();
-          }
+          RouleMaPoule();
+          
           break;
         case 1 :                                                          // Le robot est trop à Gauche de la ligne
             PWMGauche = 512;                                              // Le moteur Gauche tourne plus vite (moitié vitesse max)
@@ -259,12 +255,6 @@ void loop(){
             PWMDroit = 512;                                               // Le moteur Droit tourne plus vite (moitié vitesse max)
             if (tab_capteur_norm[2] <15) pos_ligne = 0;                  // Si le robot détecte de nouveau la ligne, on passe à l'état 0
             break;
-        case 3 :
-          Gauche();
-          if(tab_capteur_norm[2]<30){
-            pos_ligne = 0;
-          }
-          break;
       }
       break;
     case 2:
