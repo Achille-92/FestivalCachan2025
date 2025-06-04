@@ -58,8 +58,8 @@ int pos, ancienne_pos = 0, cmd;
 
 int val_BP1 = 0, val_BP2 = 0; 
 int val_pot;
-float KP = 3.6;
-float KD = 5;
+float KP = 2.3;
+float KD = 0;
 int menu = 0, menu1 = 0, Lig = 0, Lid = 0, Clig = 0, Clid = 0, fdc=0, add=0,Dem=0,i=0;
 char caractere = 0;
 int old_val_ExG,old_val_ExD;
@@ -121,104 +121,106 @@ void loop(){
     menu1 = menu;
     lcd.clear();
   }
-  switch (menu){
-    case 0:
-      lcd.setCursor(0,0);
-      lcd.printf("MenuModif");
-      lcd.setCursor(0,1);
-      lcd.printf("Etalonage");
-      // Lecture des valeurs analogiques des 5 CNY70 /////////////////////////
-      tab_capteur[0] =  analogRead(PIN_CNY70_ExGauche);
-      tab_capteur[1] = analogRead(PIN_CNY70_Gauche);
-      tab_capteur[2] = analogRead(PIN_CNY70_Milieu);
-      tab_capteur[3] = analogRead(PIN_CNY70_Droit);
-      tab_capteur[4] = analogRead(PIN_CNY70_ExDroit);  
-      // Étalonnage des capteurs pour récupérer les valeurs Min et Max entre 0 et 1023
-      for(i=0; i<5; i++){                                     // On répéte 5 fois, et i prends les valeurs 0, 1, 2, 3 et 4
-        if(tab_capteur[i] > tab_max[i]){                    // Si la valeur du CNY70, à l'indice i, est supérieure à son ancienne valeur max 
-            tab_max[i] = tab_capteur[i];                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur max du capteur 
-        }
-        if(tab_capteur[i] < tab_min[i]){                    // Si la valeur du CNY70, à l'indice i, est inférieure à son ancienne valeur min 
-            tab_min[i] = tab_capteur[i];                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur min du capteur 
-        }
-      }
-      if(val_BP1==2){
+  if(etat_course != 1){
+    switch (menu){
+      case 0:
+        lcd.setCursor(0,0);
+        lcd.printf("MenuModif");
+        lcd.setCursor(0,1);
+        lcd.printf("Etalonage");
+        // Lecture des valeurs analogiques des 5 CNY70 /////////////////////////
+        tab_capteur[0] =  analogRead(PIN_CNY70_ExGauche);
+        tab_capteur[1] = analogRead(PIN_CNY70_Gauche);
+        tab_capteur[2] = analogRead(PIN_CNY70_Milieu);
+        tab_capteur[3] = analogRead(PIN_CNY70_Droit);
+        tab_capteur[4] = analogRead(PIN_CNY70_ExDroit);  
+        // Étalonnage des capteurs pour récupérer les valeurs Min et Max entre 0 et 1023
         for(i=0; i<5; i++){                                     // On répéte 5 fois, et i prends les valeurs 0, 1, 2, 3 et 4
-          tab_max[i] = 0;                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur max du capteur 
-          tab_min[i] = 4096;                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur min du capteur 
+          if(tab_capteur[i] > tab_max[i]){                    // Si la valeur du CNY70, à l'indice i, est supérieure à son ancienne valeur max 
+              tab_max[i] = tab_capteur[i];                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur max du capteur 
+          }
+          if(tab_capteur[i] < tab_min[i]){                    // Si la valeur du CNY70, à l'indice i, est inférieure à son ancienne valeur min 
+              tab_min[i] = tab_capteur[i];                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur min du capteur 
+          }
         }
-      }
-      break;
-    case 1:
-      lcd.setCursor(0,0);
-      lcd.printf("KP:%1.2f",KP);
-      lcd.setCursor(0,1);
-      lcd.printf("Pot:%d",val_pot);
-      if(val_BP2==1){
-        while(val_BP1==0){
-          val_BP1 = digitalRead(PIN_BP1);
-          val_BP2 = digitalRead(PIN_BP2);
-          lcd.setCursor(0,0);
-          lcd.printf("KP:%1.2f",KP);
-          lcd.setCursor(0,1);
-          lcd.printf("Pot:%d",val_pot);
-          val_pot = potentiometre();
-          KP=(float)val_pot/10.0;
+        if(val_BP1==2){
+          for(i=0; i<5; i++){                                     // On répéte 5 fois, et i prends les valeurs 0, 1, 2, 3 et 4
+            tab_max[i] = 0;                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur max du capteur 
+            tab_min[i] = 4096;                    //      Alors la valeur du CNY70, à l'indice i, devient la nouvelle valeur min du capteur 
+          }
         }
-        delay(100);
-        val_BP1 = 0;
-        val_BP2 = 0;
-      }
-      break;
-    case 2:
-      lcd.setCursor(0,0);
-      lcd.printf("KD:%2.2f",KD);
-      lcd.setCursor(0,1);
-      lcd.printf("Pot:%d",val_pot);
-      if(val_BP2==1){
-        while(val_BP1==0){
-          val_BP1 = digitalRead(PIN_BP1);
-          val_BP2 = digitalRead(PIN_BP2);
-          lcd.setCursor(0,0);
-          lcd.printf("KD:%2.2f",KD);
-          lcd.setCursor(0,1);
-          lcd.printf("Pot:%d",val_pot);
-          val_pot = potentiometre();
-          KD=(float)val_pot/5;
+        break;
+      case 1:
+        lcd.setCursor(0,0);
+        lcd.printf("KP:%1.2f",KP);
+        lcd.setCursor(0,1);
+        lcd.printf("Pot:%d",val_pot);
+        if(val_BP2==1){
+          while(val_BP1==0){
+            val_BP1 = digitalRead(PIN_BP1);
+            val_BP2 = digitalRead(PIN_BP2);
+            lcd.setCursor(0,0);
+            lcd.printf("KP:%1.2f",KP);
+            lcd.setCursor(0,1);
+            lcd.printf("Pot:%d",val_pot);
+            val_pot = potentiometre();
+            KP=(float)val_pot/10.0;
+          }
+          delay(100);
+          val_BP1 = 0;
+          val_BP2 = 0;
         }
-        delay(100);
-        val_BP1 = 0;
-        val_BP2 = 0;
-      }
-      break;
-    case 3:
-      lcd.setCursor(0, 0);
-      lcd.printf("DemarageAuto");
-      lcd.setCursor(0, 1);
-      lcd.printf("Fait: %d",Dem);
-      /*if(val_BP1==1){
-        Dem = DemarageAutomatique();
-      }*/
-      break;
-    case 4:
-      lcd.setCursor(0, 0);
-      lcd.printf("etat:%1d Lid:%2d",etat_course,Lid);
-      lcd.setCursor(0, 1);
-      lcd.printf("pos:%3dadd:%3d",pos,add);
-      break;
-    case 5:
-      lcd.setCursor(0, 0);
-      lcd.printf("CedN:%3dCidN:%3d",tab_capteur_norm[4],tab_capteur_norm[3]);
-      lcd.setCursor(0, 1);
-      lcd.printf("CegN:%3dCigN:%3d",tab_capteur_norm[0],tab_capteur_norm[1]);
-      break;
-    case 6:
-      lcd.setCursor(0, 0);
-      lcd.printf("Ced:%4dCid:%4d",tab_capteur[4],tab_capteur[3]);
-      lcd.setCursor(0, 1);
-      lcd.printf("Ceg:%4dCig:%4d",tab_capteur[0],tab_capteur[1]);
-      Serial.printf("Ced:%4d Cid:%4d Ceg:%4d Cig:%4d",tab_capteur[4],tab_capteur[3],tab_capteur[0],tab_capteur[1]);
-      break;
+        break;
+      case 2:
+        lcd.setCursor(0,0);
+        lcd.printf("KD:%2.2f",KD);
+        lcd.setCursor(0,1);
+        lcd.printf("Pot:%d",val_pot);
+        if(val_BP2==1){
+          while(val_BP1==0){
+            val_BP1 = digitalRead(PIN_BP1);
+            val_BP2 = digitalRead(PIN_BP2);
+            lcd.setCursor(0,0);
+            lcd.printf("KD:%2.2f",KD);
+            lcd.setCursor(0,1);
+            lcd.printf("Pot:%d",val_pot);
+            val_pot = potentiometre();
+            KD=(float)val_pot/5;
+          }
+          delay(100);
+          val_BP1 = 0;
+          val_BP2 = 0;
+        }
+        break;
+      case 3:
+        lcd.setCursor(0, 0);
+        lcd.printf("DemarageAuto");
+        lcd.setCursor(0, 1);
+        lcd.printf("Fait: %d",Dem);
+        /*if(val_BP1==1){
+          Dem = DemarageAutomatique();
+        }*/
+        break;
+      case 4:
+        lcd.setCursor(0, 0);
+        lcd.printf("etat:%1d Lid:%2d",etat_course,Lid);
+        lcd.setCursor(0, 1);
+        lcd.printf("pos:%3dadd:%3d",pos,add);
+        break;
+      case 5:
+        lcd.setCursor(0, 0);
+        lcd.printf("CedN:%3dCidN:%3d",tab_capteur_norm[4],tab_capteur_norm[3]);
+        lcd.setCursor(0, 1);
+        lcd.printf("CegN:%3dCigN:%3d",tab_capteur_norm[0],tab_capteur_norm[1]);
+        break;
+      case 6:
+        lcd.setCursor(0, 0);
+        lcd.printf("Ced:%4dCid:%4d",tab_capteur[4],tab_capteur[3]);
+        lcd.setCursor(0, 1);
+        lcd.printf("Ceg:%4dCig:%4d",tab_capteur[0],tab_capteur[1]);
+        Serial.printf("Ced:%4d Cid:%4d Ceg:%4d Cig:%4d",tab_capteur[4],tab_capteur[3],tab_capteur[0],tab_capteur[1]);
+        break;
+    }
   }
 
   switch (etat_course){
@@ -243,7 +245,6 @@ void loop(){
           // if (tab_capteur_norm[2] < 70 && tab_capteur_norm[1] > 30) pos_ligne = 2;   // Si le robot est trop à Droite de la ligne, on passe à l'état 2          
           CompteLigne();
           RouleMaPoule();
-          
           break;
         case 1 :                                                          // Le robot est trop à Gauche de la ligne
             PWMGauche = 512;                                              // Le moteur Gauche tourne plus vite (moitié vitesse max)
