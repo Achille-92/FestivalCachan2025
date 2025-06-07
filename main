@@ -3,7 +3,7 @@
 
 Vl53l0x monCapteur;
 
-int stop = 0, distance_arret = 200; //mm
+int distance_arret = 200; //mm
 
 
 
