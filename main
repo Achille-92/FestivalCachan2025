@@ -1,41 +1,49 @@
-// Au début
-#include "Vl53l0x.h"
+#define DIRTOUTDROIT 1
+#define DIRGAUCHE 2
+#define DIRDROITE 3
 
-Vl53l0x monCapteur;
+#define LG 101
+#define LD 102
 
-int distance_arret = 200; //mm
+const int n = 2;
+int tab_ligne[2*n] = {LG, 6, LD, 5};
+int tab_action[n] = {DIRDROITE, DIRDROITE};
 
+for(int i = 0;i <n ;i++){ // Pour chaque action et couple de ligne
 
-
-// Setup :
-VL53L0X_Error status = VL53L0X_ERROR_NONE;
-status = monCapteur.begin(I2C_DEFAULT_ADDR, true);
-if (VL53L0X_ERROR_NONE != status) {
-  Serial.println("start vl53l0x mesurement failed!");
-  monCapteur.printPalError(status);
-  while (1);
-}
-monCapteur.continuousRangingInit();
-if (VL53L0X_ERROR_NONE != status) {
-  Serial.println("start vl53l0x mesurement failed!");
-  monCapteur.printPalError(status);
-  while (1);
-}
-
-
-
-// Loop :
-VL53L0X_RangingMeasurementData_t rangingMeasurementData;
-monCapteur.performContinuousRangingMeasurement(&rangingMeasurementData);
-
-// Switch(pos_ligne), Case 0 :
-  if (rangingMeasurementData.RangeMilliMeter <= distance_arret) {
-    pos_ligne = 4;
-  } 
+  if (tab_ligne[i*2]==101){ //Si on regarde les lignes de Gauche
+    if(Lig == tab_ligne[i*2+1]){  // Si Lig atteint la valeur dans TAB
+      // Décide de l'action
+      if (tab_action[i]==0){
+        //Aller tout droit
+      }
+      else if(tab_action[i]==1){
+        // Virage à Gauche
+      }
+      else if(tab_action[i]==2){
+        // Virage à Droite
+      }
+      else {
+        // Cas par défaut
+      }
+    }
+  }
+  else if(tab_ligne[i*2]==102){ // Sinon, si on regarde les lignes de Droites
+    if(Lid == tab_ligne[i*2+1]){  // Si Lig atteint la valeur dans TAB
+      // Décide de l'action
+      if (tab_action[i]==0){
+        //Aller tout droit
+      }
+      else if(tab_action[i]==1){
+        // Virage à Gauche
+      }
+      else if(tab_action[i]==2){
+        // Virage à Droite
+      }
+      else {
+        // Cas par défaut
+      }
+    }
+  }
   
-// Switch(pos_ligne), Case 4 :
-  case 4 :
-    if (rangingMeasurementData.RangeMilliMeter >= distance_arret) {
-      pos_ligne = 0;
-    } 
-    break;
+}
